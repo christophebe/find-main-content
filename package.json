@@ -8,12 +8,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/christophebe/contentfinder.git"
+    "url": "git+https://github.com/christophebe/find-main-content.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/christophebe/contentfinder/issues"
+    "url": "https://github.com/christophebe/find-main-content/issues"
   },
-  "homepage": "https://github.com/christophebe/contentfinder#readme"
+  "homepage": "https://github.com/christophebe/find-main-content#readme"
 }
