@@ -1,0 +1,19 @@
+{
+  "name": "contentfinder",
+  "version": "1.0.0",
+  "description": "Module for finding the main content on an HTML page with the help of Cheerio",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/christophebe/contentfinder.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/christophebe/contentfinder/issues"
+  },
+  "homepage": "https://github.com/christophebe/contentfinder#readme"
+}
