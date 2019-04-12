@@ -57,16 +57,9 @@ function findContent($, options = defaultOptions) {
 
   let contentSection = null;
 
-  // If the HTML 5 article is used
-  if ($('body').find('article').length === 1) {
-    contentSection = $('article');
+  const div = findContentSection($, contentSection);
 
-  // Try the find the main content
-  } else {
-    const div = findContentSection($, contentSection);
-
-    contentSection = div ? $(div) : $('body');
-  }
+  contentSection = div ? $(div) : $('body');
 
   result.links = findLinks($, contentSection, options);
   result.images = findImages($, contentSection, options);
@@ -79,6 +72,7 @@ function findContent($, options = defaultOptions) {
     removeDiv($, contentSection);
   }
 
+  console.log(contentSection.html());
   result.content = contentSection.html();
 
   return result;
