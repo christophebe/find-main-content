@@ -72,7 +72,6 @@ function findContent($, options = defaultOptions) {
     cleantContent($, contentSection);
   }
 
-  console.log(contentSection.html());
   result.content = contentSection.html();
 
   return result;
