@@ -1,15 +1,17 @@
+// Use this test to check with your pages
+// Let me know if it is not working for you
+
 const rq = require('request-promise-native');
 const cheerio = require('cheerio');
 const { findContent } = require('../index.js');
 
-// const should = require('chai').should();
-
-const url = 'https://www.leefjepensioen.nl/blogoverzicht/blog-detail/deeltijdpensioen-steeds-meer-in-trek/419';
+const url = '';
 
 describe('Test Find Content', async () => {
   let $ = null;
 
   beforeEach(async () => {
+    console.log('Requesting page ....');
     const options = {
       uri: url,
       resolveWithFullResponse: false,
@@ -19,6 +21,7 @@ describe('Test Find Content', async () => {
     };
 
     $ = await rq(options);
+    console.log('End of requesting page');
   });
 
   it('should works', async () => {

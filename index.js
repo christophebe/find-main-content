@@ -1,5 +1,5 @@
 const HEADERS = 'h1,h2,h3,h4,h5,h6,h7';
-const BASIC_CONTENT = 'h1,h2,h3,h4,h5,h6,h7,p';
+const BASIC_CONTENT = 'p';
 const BAD_TAGS = 'script,link,header,style,noscript,form,object,footer,nav,iframe,br';
 
 const N0T_A_GOOD_CLASS = '.combx,.comment,.disqus,.foot,.header,.menu,.meta,.nav,.rss,.shoutbox,.sidebar,.sponsor,.ssba,.bctt-click-to-tweet,.promo,.promotion';
@@ -28,7 +28,7 @@ const defaultOptions = {
   removeH1FromContent: true,
   removeHeadersWithoutText: true,
   removeImage: true,
-  removeDiv: true,
+  cleanContent: true,
   replaceLinks: true
 
 };
@@ -68,8 +68,8 @@ function findContent($, options = defaultOptions) {
     removeH1FromContent($, contentSection);
   }
 
-  if (options.removeDiv) {
-    removeDiv($, contentSection);
+  if (options.cleanContent) {
+    cleantContent($, contentSection);
   }
 
   console.log(contentSection.html());
@@ -130,12 +130,12 @@ function cleanHTML($) {
 }
 
 /**
- * removeDiv - Remove Div which have not basic content (header or paragraph) or that are empty
+ * cleantContent - Clean the main the content (empty div,p, revomve small text, ...)
  *
  * @param  {object} $              Cheerio reference
  * @param  {object} contentSection the element/tag from which we will find div without content
  */
-function removeDiv($, contentSection) {
+function cleantContent($, contentSection) {
   contentSection.find('div').each((i, d) => {
     if ($(d).children(BASIC_CONTENT).length === 0) {
       $(d).remove();
@@ -146,6 +146,13 @@ function removeDiv($, contentSection) {
   contentSection.find('div').each((i, d) => {
     if ($(d).children().length === 0) {
       $(d).remove();
+    }
+  });
+
+  // Remove span that are not in a paragraph
+  contentSection.find('span').each((i, s) => {
+    if ($(s).parent() && $(s).parent().name !== 'p') {
+      $(s).remove();
     }
   });
 }
