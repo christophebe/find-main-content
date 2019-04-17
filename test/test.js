@@ -1,9 +1,12 @@
 // Use this test to check with your pages
 // Let me know if it is not working for you
-
+const fs = require('fs');
+const util = require('util');
 const rq = require('request-promise-native');
 const cheerio = require('cheerio');
 const { findContent } = require('../index.js');
+
+const writeFile = util.promisify(fs.writeFile);
 
 const url = '';
 
@@ -25,8 +28,9 @@ describe('Test Find Content', async () => {
   });
 
   it('should works', async () => {
-    // const content = findContent($);
-    // console.log(content);
-    console.log(findContent($));
+    const result = findContent($, true);
+
+    console.log(result);
+    await writeFile('./test.md', result.content);
   });
 });

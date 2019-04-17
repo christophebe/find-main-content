@@ -1,5 +1,8 @@
+const TurndownService = require('turndown');
+const turndownPluginGfm = require('turndown-plugin-gfm');
+
 const HEADERS = 'h1,h2,h3,h4,h5,h6,h7';
-const BASIC_CONTENT = 'p';
+const BASIC_CONTENT = 'p,h1,h2,h3,h4,h5,h6,h7';
 const BAD_TAGS = 'script,link,header,style,noscript,form,object,footer,nav,iframe,br';
 
 const N0T_A_GOOD_CLASS = '.combx,.comment,.disqus,.foot,.header,.menu,.meta,.nav,.rss,.shoutbox,.sidebar,.sponsor,.ssba,.bctt-click-to-tweet,.promo,.promotion';
@@ -39,10 +42,12 @@ const defaultOptions = {
  * Return the main content of a page without menu, header, footer, sidebar, ....
  *
  * @param  {object} $                        Cheerio reference matching to the HTML page
+ * @param  {string} convertToMarkdown        if true, the main content is converted into markdown,
+ *                                           else the html text is returned
  * @param  {object} options = defaultOptions List of options to change the content output
  * @returns {string}                         The HTML code of the main content of the page
  */
-function findContent($, options = defaultOptions) {
+function findContent($, convertToMarkdown = false, options = defaultOptions) {
   const result = {
     title: getTitle($),
     description: getDescription($),
@@ -72,9 +77,17 @@ function findContent($, options = defaultOptions) {
     cleantContent($, contentSection);
   }
 
-  result.content = contentSection.html();
+  result.content = convertToMarkdown ? convertToMD(contentSection.html()) : contentSection.html();
 
   return result;
+}
+
+function convertToMD(html) {
+  const turndownService = new TurndownService();
+
+  turndownService.use(turndownPluginGfm.gfm);
+
+  return turndownService.turndown(html);
 }
 
 /**
