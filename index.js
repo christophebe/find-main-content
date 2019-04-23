@@ -227,9 +227,6 @@ function findLinks($, contentSection, options) {
     links.push({ href: $(a).attr('href'), text: $(a).text() });
 
     if (options.replaceLinks) {
-      console.log('replace links', `${ $(a).text() }`);
-
-      // $(a).replaceWith($(`${ $(a).text() }`));
       $(a).replaceWith(`${ $(a).text() }`);
     }
   });
