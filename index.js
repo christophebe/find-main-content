@@ -38,7 +38,7 @@ const defaultOptions = {
   removeHeadersWithoutText: true,
 
   // if true, don't add the images in the final extraction
-  removeImage: true,
+  removeImages: true,
 
   // Remove HTML tag figcaption
   removeFigcaptions: true,
@@ -170,6 +170,12 @@ function cleanContent($, contentSection, options) {
     removeH1FromContent($, contentSection);
   }
 
+  if (options.removeImages && options.removeFigcaptions) {
+    contentSection.find('figcaption').each((i, d) => {
+      $(d).remove();
+    });
+  }
+
   contentSection.find('div').each((i, d) => {
     if ($(d).children(BASIC_CONTENT).length === 0) {
       $(d).remove();
@@ -221,7 +227,10 @@ function findLinks($, contentSection, options) {
     links.push({ href: $(a).attr('href'), text: $(a).text() });
 
     if (options.replaceLinks) {
-      $(a).replaceWith($(`<span>${ $(a).text() }</span>`));
+      console.log('replace links', `${ $(a).text() }`);
+
+      // $(a).replaceWith($(`${ $(a).text() }`));
+      $(a).replaceWith(`${ $(a).text() }`);
     }
   });
 
@@ -242,7 +251,7 @@ function findImages($, contentSection, options) {
   contentSection.find('img').each((i, img) => {
     images.push({ src: $(img).attr('src'), alt: $(img).attr('alt') });
 
-    if (options.removeImage) {
+    if (options.removeImages) {
       $('body').find('img').remove();
     }
   });
