@@ -27,11 +27,23 @@ const REGEX = {
 };
 
 const defaultOptions = {
+
+  // If more then one H1 is found, use the first one as the main title of the page
   useFirstH1: true,
+
+  // Remove the H1 from the main content, the H1 will be in the final json structure
   removeH1FromContent: true,
+
+  // Some site set some links in Hn, if true, we remove them
   removeHeadersWithoutText: true,
+
+  // if true, don't add the images in the final extraction
   removeImage: true,
-  cleanContent: true,
+
+  // Remove HTML tag figcaption
+  removeFigcaptions: true,
+
+  // Replace links by their anchor text
   replaceLinks: true
 
 };
@@ -48,40 +60,40 @@ const defaultOptions = {
  * @returns {string}                         The HTML code of the main content of the page
  */
 function findContent($, convertToMarkdown = false, options = defaultOptions) {
+  // Get the title, description and the H1
   const result = {
     title: getTitle($),
     description: getDescription($),
     h1: getH1($, options.useFirstH1)
   };
 
-  cleanHTML($);
+  // Clean the HTML before finding the main content
+  cleanHTML($, options);
 
-  if (options.removeHeadersWithoutText) {
-    removeHeadersWithoutText($);
-  }
-
+  // Find the main div containing the main content
   let contentSection = null;
-
   const div = findContentSection($, contentSection);
 
   contentSection = div ? $(div) : $('body');
 
+  // Extract images & links
   result.links = findLinks($, contentSection, options);
   result.images = findImages($, contentSection, options);
 
-  if (options.removeH1FromContent) {
-    removeH1FromContent($, contentSection);
-  }
-
-  if (options.cleanContent) {
-    cleantContent($, contentSection);
-  }
+  // Clean the final content in function of the options
+  cleanContent($, contentSection, options);
 
   result.content = convertToMarkdown ? convertToMD(contentSection.html()) : contentSection.html();
 
   return result;
 }
 
+/**
+ * convertToMD - Convert the HTML into markdown
+ *
+ * @param  {type} html description
+ * @returns {type}      description
+ */
 function convertToMD(html) {
   const turndownService = new TurndownService();
 
@@ -128,8 +140,9 @@ function getH1($, useFirstH1) {
  * cleanHTML - Clean the page before finding the main content
  *
  * @param  {object} $       Cheerio ref
+ * @param  {object}options  the options used to scrape the page
  */
-function cleanHTML($) {
+function cleanHTML($, options) {
   $('body').find(BAD_TAGS).remove();
   $('body').find(N0T_A_GOOD_CLASS).remove();
   $('body').find(N0T_A_GOOD_ID).remove();
@@ -139,22 +152,31 @@ function cleanHTML($) {
    .contents()
    .filter((i, e) => e.type === 'comment')
    .remove();
+
+  if (options.removeHeadersWithoutText) {
+    removeHeadersWithoutText($);
+  }
 }
 
 /**
- * cleantContent - Clean the main the content (empty div,p, revomve small text, ...)
+ * cleantContent - Clean the main the content (empty div,p, remove small text, ...)
  *
  * @param  {object} $              Cheerio reference
  * @param  {object} contentSection the element/tag from which we will find div without content
+ * @param  {object} options  the options used to scrape the page
  */
-function cleantContent($, contentSection) {
+function cleanContent($, contentSection, options) {
+  if (options.removeH1FromContent) {
+    removeH1FromContent($, contentSection);
+  }
+
   contentSection.find('div').each((i, d) => {
     if ($(d).children(BASIC_CONTENT).length === 0) {
       $(d).remove();
     }
   });
 
-  // Remove Div that are empty
+  // Remove div that are empty
   contentSection.find('div').each((i, d) => {
     if ($(d).children().length === 0) {
       $(d).remove();
