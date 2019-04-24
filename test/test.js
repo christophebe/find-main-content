@@ -8,9 +8,7 @@ const { findContent } = require('../index.js');
 
 const writeFile = util.promisify(fs.writeFile);
 
-const url = 'https://www.theguardian.com/football/blog/2019/apr/19/tottenham-arsenal-mauricio-pochettino-daniel-levy-rivals';
-
-// const url = 'https://elpais.com/cultura/2019/04/17/actualidad/1555507071_675814.html';
+const url = '';
 
 describe('Test Find Content', async () => {
   let $ = null;

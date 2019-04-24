@@ -3,7 +3,7 @@ const turndownPluginGfm = require('turndown-plugin-gfm');
 
 const HEADERS = 'h1,h2,h3,h4,h5,h6,h7';
 const BASIC_CONTENT = 'p,h1,h2,h3,h4,h5,h6,h7';
-const BAD_TAGS = 'script,link,header,style,noscript,form,object,footer,nav,iframe,br';
+const BAD_TAGS = 'script,link,header,style,noscript,form,object,footer,nav,iframe,br,svg';
 
 const N0T_A_GOOD_CLASS = '.combx,.comment,.disqus,.foot,.header,.menu,.meta,.nav,.rss,.shoutbox,.sidebar,.sponsor,.ssba,.bctt-click-to-tweet,.promo,.promotion';
 const N0T_A_GOOD_ID = '#combx,#comments,#disqus,#foot,#header,#menu,#meta,#nav,#rss,#shoutbox,#sidebar,#sponsor,#promo,#promotion,#ads';
@@ -109,7 +109,7 @@ function convertToMD(html) {
  * @returns {string}   the text of the title
  */
 function getTitle($) {
-  return $('title') ? $('title').text() : null;
+  return $('title') ? removeLineBreaks($('title').text()) : null;
 }
 
 /**
@@ -119,7 +119,7 @@ function getTitle($) {
  * @returns {string}  the text of the meta description
  */
 function getDescription($) {
-  return $('meta[name=description]') ? $('meta[name=description]').attr('content') : null;
+  return $('meta[name=description]') ? removeLineBreaks($('meta[name=description]').attr('content')) : null;
 }
 
 /**
@@ -133,7 +133,7 @@ function getH1($, useFirstH1) {
   const nbrH1 = $('body').find('h1').length;
 
   return nbrH1 === 0 ? null :
-    nbrH1 === 1 || useFirstH1 ? $('h1').first().text() : null;
+    nbrH1 === 1 || useFirstH1 ? removeLineBreaks($('h1').first().text()) : null;
 }
 
 /**
@@ -191,7 +191,9 @@ function cleanContent($, contentSection, options) {
 
   // Remove span that are not in a paragraph
   contentSection.find('span').each((i, s) => {
-    if ($(s).parent() && $(s).parent().name !== 'p') {
+    const parents = $(s).parents('p');
+
+    if (parents && parents.length === 0) {
       $(s).remove();
     }
   });
@@ -224,10 +226,10 @@ function findLinks($, contentSection, options) {
   const links = [];
 
   contentSection.find('a').each((i, a) => {
-    links.push({ href: $(a).attr('href'), text: $(a).text() });
+    links.push({ href: $(a).attr('href'), text: removeLineBreaks($(a).text()) });
 
     if (options.replaceLinks) {
-      $(a).replaceWith(`${ $(a).text() }`);
+      $(a).replaceWith(`${ removeLineBreaks($(a).text()) }`);
     }
   });
 
@@ -441,9 +443,12 @@ function getLinkDensity($, element) {
   return linkLength / textLength;
 }
 
-// Remove carriage return in a string
 function removeExtraChars(s) {
   return s.replace(/\s+/g, ' ').trim();
+}
+
+function removeLineBreaks(s) {
+  return s.replace(/(\r\n|\n|\r)/gm, '');
 }
 
 exports.findContent = findContent;
