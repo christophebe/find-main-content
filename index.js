@@ -8,6 +8,7 @@ const BAD_TAGS = 'script,link,header,style,noscript,object,footer,nav,iframe,br,
 const N0T_A_GOOD_CLASS = '.combx,.comment,.disqus,.foot,.header,.menu,.meta,.nav,.rss,.shoutbox,.sidebar,.sponsor,.ssba,.bctt-click-to-tweet,.promo,.promotion';
 const N0T_A_GOOD_ID = '#combx,#comments,#disqus,#foot,#header,#menu,#meta,#nav,#rss,#shoutbox,#sidebar,#sponsor,#promo,#promotion,#ads';
 
+const TABLE_HEADER = '<thead><tr></tr></thead>';
 const CLASS_WEIGHT = 25;
 const MIN_LINK_DENSITY = 0.33;
 const VERY_GOOD_SCORE = 5;
@@ -163,6 +164,7 @@ function cleanHTML($, options) {
 
 /**
  * cleantContent - Clean the main the content (empty div,p, remove small text, ...)
+ *  and fix table without header
  *
  * @param  {object} $              Cheerio reference
  * @param  {object} contentSection the element/tag from which we will find div without content
@@ -198,6 +200,16 @@ function cleanContent($, contentSection, options) {
 
     if (parents && parents.length === 0) {
       $(s).remove();
+    }
+  });
+
+  // Fix Tables without headers due to a bug in turndown
+  // it cannot convert table wihtout header into markdown
+  contentSection.find('table').each((i, t) => {
+    console.log(`found table ${ i }`);
+
+    if ($(t).find('thead').length === 0) {
+      $(t).prepend(TABLE_HEADER);
     }
   });
 }
