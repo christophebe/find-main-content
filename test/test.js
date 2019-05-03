@@ -21,7 +21,8 @@ describe('Test Find Content', async () => {
       resolveWithFullResponse: false,
 
       // proxy :
-      // headers: { "User-Agent": DEFAULT_USER_AGENT },
+      headers: { 'User-Agent': 'Mozilla/5.0' },
+
       // rejectUnauthorized
       // secureOptions: requ ire('constants').SSL_OP_NO_TLSv1_2,
       transform(body) {
@@ -29,8 +30,12 @@ describe('Test Find Content', async () => {
       }
     };
 
-    $ = await rq(options);
-    console.log('End of requesting page');
+    try {
+      $ = await rq(options);
+      console.log('End of requesting page');
+    } catch (e) {
+      console.log(e);
+    }
   });
 
   it('should works', async () => {

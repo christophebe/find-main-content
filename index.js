@@ -3,7 +3,7 @@ const turndownPluginGfm = require('turndown-plugin-gfm');
 
 const HEADERS = 'h1,h2,h3,h4,h5,h6,h7';
 const BASIC_CONTENT = 'p,h1,h2,h3,h4,h5,h6,h7';
-const BAD_TAGS = 'script,link,header,style,noscript,form,object,footer,nav,iframe,br,svg';
+const BAD_TAGS = 'script,link,header,style,noscript,object,footer,nav,iframe,br,svg';
 
 const N0T_A_GOOD_CLASS = '.combx,.comment,.disqus,.foot,.header,.menu,.meta,.nav,.rss,.shoutbox,.sidebar,.sponsor,.ssba,.bctt-click-to-tweet,.promo,.promotion';
 const N0T_A_GOOD_ID = '#combx,#comments,#disqus,#foot,#header,#menu,#meta,#nav,#rss,#shoutbox,#sidebar,#sponsor,#promo,#promotion,#ads';
@@ -44,7 +44,10 @@ const defaultOptions = {
   removeFigcaptions: true,
 
   // Replace links by their anchor text
-  replaceLinks: true
+  replaceLinks: true,
+
+  // Remove HTML Form
+  removeForm: false
 
 };
 
@@ -143,7 +146,7 @@ function getH1($, useFirstH1) {
  * @param  {object}options  the options used to scrape the page
  */
 function cleanHTML($, options) {
-  $('body').find(BAD_TAGS).remove();
+  $('body').find(BAD_TAGS + (options.removeForm ? ',form' : '')).remove();
   $('body').find(N0T_A_GOOD_CLASS).remove();
   $('body').find(N0T_A_GOOD_ID).remove();
 
