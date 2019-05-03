@@ -8,7 +8,9 @@ const { findContent } = require('../index.js');
 
 const writeFile = util.promisify(fs.writeFile);
 
-const url = '';
+const url = 'https://blog.geld.nl/autoverzekering/auto-gestolen-vervangende-auto-beperkt-vergoed';
+
+// const url = 'https://www.pret-personnel-comparatif.com/pret-auto.html';
 
 describe('Test Find Content', async () => {
   let $ = null;
