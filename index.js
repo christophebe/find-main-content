@@ -8,7 +8,6 @@ const BAD_TAGS = 'script,link,header,style,noscript,object,footer,nav,iframe,br,
 const N0T_A_GOOD_CLASS = '.combx,.comment,.disqus,.foot,.header,.menu,.meta,.nav,.rss,.shoutbox,.sidebar,.sponsor,.ssba,.bctt-click-to-tweet,.promo,.promotion';
 const N0T_A_GOOD_ID = '#combx,#comments,#disqus,#foot,#header,#menu,#meta,#nav,#rss,#shoutbox,#sidebar,#sponsor,#promo,#promotion,#ads';
 
-const TABLE_HEADER = '<thead><tr></tr></thead>';
 const CLASS_WEIGHT = 25;
 const MIN_LINK_DENSITY = 0.33;
 const VERY_GOOD_SCORE = 5;
@@ -136,8 +135,8 @@ function getDescription($) {
 function getH1($, useFirstH1) {
   const nbrH1 = $('body').find('h1').length;
 
-  return nbrH1 === 0 ? null :
-    nbrH1 === 1 || useFirstH1 ? removeLineBreaks($('h1').first().text()) : null;
+  return nbrH1 === 0 ? '' :
+    nbrH1 === 1 || useFirstH1 ? removeLineBreaks($('h1').first().text()) : '';
 }
 
 /**
@@ -204,14 +203,47 @@ function cleanContent($, contentSection, options) {
   });
 
   // Fix Tables without headers due to a bug in turndown
-  // it cannot convert table wihtout header into markdown
+  // it cannot convert html table wihtout header into markdown
   contentSection.find('table').each((i, t) => {
-    console.log(`found table ${ i }`);
-
     if ($(t).find('thead').length === 0) {
-      $(t).prepend(TABLE_HEADER);
+      addTableHeader($, t);
     }
   });
+}
+
+/**
+ * addTableHeader - Add a header in a table
+ * because turndown cannot convert a table without a header
+ *
+ * @param  {type} $ Cheerio reference
+ * @param  {type} t The HTML Table
+ */
+function addTableHeader($, t) {
+  // We simplify the process by removing caption inside the table
+  // this is not possible to support all possibilities in the html tables structure
+  $(t).find('caption').remove();
+
+  const firstElement = $(t).children().first();
+
+  // Case 1 :  a table with a tbody but without thead
+  // Extract the first row from the tbody and create a header with it
+  if (firstElement['0'].name === 'tbody') {
+    const firstRow = $(firstElement).children().first();
+
+    $(t).prepend(`<thead>${ firstRow.html() }</thead>`);
+    $(firstRow).remove();
+
+  // Case 2 : a table without tbody & without thead
+  // Create a header with the first row and create a tbody with the other rows
+  } else {
+    const headerHtml = firstElement.html();
+
+    $(firstElement).remove();
+    const rows = $(t).children().html();
+
+    $(t).children().remove();
+    $(t).append(`<thead>${ headerHtml }</thead><tbody>${ rows }</tbody>`);
+  }
 }
 
 /**
@@ -463,6 +495,10 @@ function removeExtraChars(s) {
 }
 
 function removeLineBreaks(s) {
+  if (!s) {
+    return '';
+  }
+
   return s.replace(/(\r\n|\n|\r)/gm, '');
 }
 

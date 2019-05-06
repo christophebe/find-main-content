@@ -10,8 +10,6 @@ const writeFile = util.promisify(fs.writeFile);
 
 const url = '';
 
-// const url = 'https://www.pret-personnel-comparatif.com/pret-auto.html';
-
 describe('Test Find Content', async () => {
   let $ = null;
 
