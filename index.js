@@ -2,6 +2,7 @@ const TurndownService = require('turndown');
 const turndownPluginGfm = require('turndown-plugin-gfm');
 
 const HEADERS = 'h1,h2,h3,h4,h5,h6,h7';
+const DIV_ARTICLE = 'article,.article,#article';
 const BASIC_CONTENT = 'p,h1,h2,h3,h4,h5,h6,h7';
 const BAD_TAGS = 'script,link,header,style,noscript,object,footer,nav,iframe,br,svg';
 
@@ -47,7 +48,10 @@ const defaultOptions = {
   replaceLinks: true,
 
   // Remove HTML Form
-  removeForm: false
+  removeForm: false,
+
+  // Remove basic html tags that have no children
+  removeEmptyTag: false
 
 };
 
@@ -180,11 +184,13 @@ function cleanContent($, contentSection, options) {
     });
   }
 
-  contentSection.find('div').each((i, d) => {
-    if ($(d).children(BASIC_CONTENT).length === 0) {
-      $(d).remove();
-    }
-  });
+  if (options.removeEmptyTag) {
+    contentSection.find('div').each((i, d) => {
+      if ($(d).children(BASIC_CONTENT).length === 0) {
+        $(d).remove();
+      }
+    });
+  }
 
   // Remove div that are empty
   contentSection.find('div').each((i, d) => {
@@ -327,6 +333,12 @@ function removeHeadersWithoutText($) {
  * @returns {object}  the Cheerio element matching to the main content, probably a div
  */
 function findContentSection($) {
+  const articleTags = $('body').find(DIV_ARTICLE);
+
+  if (articleTags.length === 1) {
+    return articleTags[0];
+  }
+
   const candidates = findGoodCandidates($);
   const topCandidate = getTopCandidate($, candidates);
 
