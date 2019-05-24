@@ -2,7 +2,7 @@ const TurndownService = require('turndown');
 const turndownPluginGfm = require('turndown-plugin-gfm');
 
 const HEADERS = 'h1,h2,h3,h4,h5,h6,h7';
-const DIV_ARTICLE = 'article,.article,#article';
+const DIV_ARTICLE = 'article,.article,#article,section';
 const BASIC_CONTENT = 'p,h1,h2,h3,h4,h5,h6,h7';
 const BAD_TAGS = 'script,link,header,style,noscript,object,footer,nav,iframe,br,svg';
 
@@ -325,7 +325,7 @@ function removeHeadersWithoutText($) {
 }
 
 /**
- * findContentSection - description
+ * findContentSection - Try to find the div that contains the article content
  * Find the main content div - Using a variety of metrics (content score, classname, element types),
  * Find the content that is most likely to be the stuff a user wants to read.
  *
@@ -333,16 +333,38 @@ function removeHeadersWithoutText($) {
  * @returns {object}  the Cheerio element matching to the main content, probably a div
  */
 function findContentSection($) {
-  const articleTags = $('body').find(DIV_ARTICLE);
+  // Try to find the HTML tag (article, section, ... )
+  console.log('Try to find a section ');
+  const article = findArticle($);
 
-  if (articleTags.length === 1) {
-    return articleTags[0];
+  if (article) {
+    return article;
   }
 
+  // Bad luck, try to find the top candidate div
   const candidates = findGoodCandidates($);
   const topCandidate = getTopCandidate($, candidates);
 
   return topCandidate;
+}
+
+function findArticle($) {
+  let selectedSection = { s: null, nbrParas: 0 };
+  const sectionTags = $('body').find(DIV_ARTICLE);
+
+  if (sectionTags.length > 0) {
+    sectionTags.each((i, s) => {
+      const nbrParas = $(s).find('p').length;
+
+      console.log(`nbr p :${ nbrParas }`);
+
+      if (selectedSection.nbrParas < nbrParas) {
+        selectedSection = { s, nbrParas };
+      }
+    });
+  }
+
+  return selectedSection.s;
 }
 
 /**
