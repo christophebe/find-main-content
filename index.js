@@ -2,7 +2,7 @@ const TurndownService = require('turndown');
 const turndownPluginGfm = require('turndown-plugin-gfm');
 
 const HEADERS = 'h1,h2,h3,h4,h5,h6,h7';
-const DIV_ARTICLE = 'article,.article,#article,section';
+const DIV_ARTICLE = 'article,.article,#article,section,table,.container';
 const BASIC_CONTENT = 'p,h1,h2,h3,h4,h5,h6,h7';
 const BAD_TAGS = 'script,link,header,style,noscript,object,footer,nav,iframe,br,svg';
 
@@ -333,8 +333,7 @@ function removeHeadersWithoutText($) {
  * @returns {object}  the Cheerio element matching to the main content, probably a div
  */
 function findContentSection($) {
-  // Try to find the HTML tag (article, section, ... )
-  console.log('Try to find a section ');
+  // Try to find the main HTML tag (article, section, ... )
   const article = findArticle($);
 
   if (article) {
@@ -348,15 +347,22 @@ function findContentSection($) {
   return topCandidate;
 }
 
+/**
+ * findArticle - Find the tag that contains the article content
+ *
+ * @param  {object} $ The Cheerio reference
+ * @returns {object}  The Cheerio tag that match to the tag
+ */
 function findArticle($) {
   let selectedSection = { s: null, nbrParas: 0 };
   const sectionTags = $('body').find(DIV_ARTICLE);
 
+  // Select the tag that have the more important number of paragraph
   if (sectionTags.length > 0) {
     sectionTags.each((i, s) => {
       const nbrParas = $(s).find('p').length;
 
-      console.log(`nbr p :${ nbrParas }`);
+      // console.log(`nbr p :${ nbrParas }`);
 
       if (selectedSection.nbrParas < nbrParas) {
         selectedSection = { s, nbrParas };
