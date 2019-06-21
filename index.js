@@ -22,6 +22,10 @@ const EXTRA_SCORE = 3;
 
 const MIN_CHARS = 25;
 
+const HTML = 'html';
+const MD = 'md';
+const TXT = 'txt';
+
 const REGEX = {
   positiveRe: /article|body|content|entry|hentry|page|pagination|post|text/i,
   negativeRe: /combx|comment|contact|foot|footer|footnote|link|media|meta|promo|related|scroll|shoutbox|sponsor|tags|widget/i
@@ -61,12 +65,12 @@ const defaultOptions = {
  * Return the main content of a page without menu, header, footer, sidebar, ....
  *
  * @param  {object} $                        Cheerio reference matching to the HTML page
- * @param  {string} convertToMarkdown        if true, the main content is converted into markdown,
+ * @param  {string} type                     the output type : HTML, TXT ot MD (markdown)
  *                                           else the html text is returned
  * @param  {object} options = defaultOptions List of options to change the content output
  * @returns {string}                         The HTML code of the main content of the page
  */
-function findContent($, convertToMarkdown = false, options = defaultOptions) {
+function findContent($, type = HTML, options = defaultOptions) {
   // Get the title, description and the H1
   const result = {
     title: getTitle($),
@@ -78,19 +82,20 @@ function findContent($, convertToMarkdown = false, options = defaultOptions) {
   cleanHTML($, options);
 
   // Find the main div containing the main content
-  let contentSection = null;
-  const div = findContentSection($, contentSection);
+  let content = null;
+  const div = findContentSection($, content);
 
-  contentSection = div ? $(div) : $('body');
+  content = div ? $(div) : $('body');
 
   // Extract images & links
-  result.links = findLinks($, contentSection, options);
-  result.images = findImages($, contentSection, options);
+  result.links = findLinks($, content, options);
+  result.images = findImages($, content, options);
+  result.headers = findHeaders($, content, options);
 
   // Clean the final content in function of the options
-  cleanContent($, contentSection, options);
+  cleanContent($, content, options);
 
-  result.content = convertToMarkdown ? convertToMD(contentSection.html()) : contentSection.html();
+  result.content = type === MD ? convertToMD(content.html()) : type === TXT ? content.text() : content.html();
 
   return result;
 }
@@ -265,6 +270,24 @@ function removeH1FromContent($, contentSection) {
   if (h1.length === 1) {
     $(h1).remove();
   }
+}
+
+/**
+ * findHeaders - Find the hn (H1, H2, .... )
+ *
+ * @param  {object} $              The cheerion reference
+ * @param  {object} contentSection The element/tag from which we will find the header
+ * @param  {object} options        The options
+ * @returns {Array<object>}        The list of the headers found in the content
+ */
+function findHeaders($, contentSection) {
+  const headers = [];
+
+  contentSection.find(HEADERS).each((i, header) => {
+    headers.push({ type: header.name, text: $(header).text() });
+  });
+
+  return headers;
 }
 
 /**

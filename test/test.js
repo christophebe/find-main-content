@@ -38,8 +38,22 @@ describe('Test Find Content', async () => {
     }
   });
 
-  it('should works', async () => {
-    const result = findContent($, true);
+  it('Convert in txt', async () => {
+    const result = findContent($, 'txt');
+
+    console.log(result);
+    await writeFile('./test.txt', result.content);
+  });
+
+  it('Convert in html', async () => {
+    const result = findContent($, 'html');
+
+    console.log(result);
+    await writeFile('./test.html', result.content);
+  });
+
+  it('Convert in md', async () => {
+    const result = findContent($, 'md');
 
     console.log(result);
     await writeFile('./test.md', result.content);
