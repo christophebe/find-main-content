@@ -1,5 +1,6 @@
 const TurndownService = require('turndown');
 const turndownPluginGfm = require('turndown-plugin-gfm');
+const { getStatements, removeSpecials, removeLineBreaks } = require('natural-content');
 
 const HEADERS = 'h1,h2,h3,h4,h5,h6,h7';
 const DIV_ARTICLE = 'article,.article,#article,section,table,.container';
@@ -94,10 +95,13 @@ function findContent($, type = HTML, options = defaultOptions) {
 
   // Clean the final content in function of the options
   cleanContent($, content, options);
-
-  result.content = type === MD ? convertToMD(content.html()) : type === TXT ? content.text() : content.html();
+  result.content = type === MD ? convertToMD(content.html()) : type === TXT ? getCleanText(content.text()) : content.html();
 
   return result;
+}
+
+function getCleanText(text) {
+  return getStatements(text).join('').trim();
 }
 
 /**
@@ -121,7 +125,7 @@ function convertToMD(html) {
  * @returns {string}   the text of the title
  */
 function getTitle($) {
-  return $('title') ? removeLineBreaks($('title').text()) : null;
+  return $('title') ? removeSpecials($('title').text()) : null;
 }
 
 /**
@@ -145,7 +149,7 @@ function getH1($, useFirstH1) {
   const nbrH1 = $('body').find('h1').length;
 
   return nbrH1 === 0 ? '' :
-    nbrH1 === 1 || useFirstH1 ? removeLineBreaks($('h1').first().text()) : '';
+    nbrH1 === 1 || useFirstH1 ? removeSpecials($('h1').first().text()) : '';
 }
 
 /**
@@ -284,7 +288,7 @@ function findHeaders($, contentSection) {
   const headers = [];
 
   contentSection.find(HEADERS).each((i, header) => {
-    headers.push({ type: header.name, text: $(header).text() });
+    headers.push({ type: header.name, text: removeSpecials($(header).text()) });
   });
 
   return headers;
@@ -302,10 +306,10 @@ function findLinks($, contentSection, options) {
   const links = [];
 
   contentSection.find('a').each((i, a) => {
-    links.push({ href: $(a).attr('href'), text: removeLineBreaks($(a).text()) });
+    links.push({ href: removeLineBreaks($(a).attr('href')), text: removeSpecials($(a).text()) });
 
     if (options.replaceLinks) {
-      $(a).replaceWith(`${ removeLineBreaks($(a).text()) }`);
+      $(a).replaceWith(`${ removeSpecials($(a).text()) }`);
     }
   });
 
@@ -555,14 +559,6 @@ function getLinkDensity($, element) {
 
 function removeExtraChars(s) {
   return s.replace(/\s+/g, ' ').trim();
-}
-
-function removeLineBreaks(s) {
-  if (!s) {
-    return '';
-  }
-
-  return s.replace(/(\r\n|\n|\r)/gm, '');
 }
 
 exports.findContent = findContent;

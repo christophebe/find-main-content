@@ -7,6 +7,7 @@
     "mocha": true
   },
   "rules": {
-    "no-console": ["error", { "allow": ["log", "warn", "error"] }]
+    "no-console": ["error", { "allow": ["log", "warn", "error"] }],
+    "max-len" :  ["error", { "code": 200 }]
   }
 }
