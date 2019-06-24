@@ -95,20 +95,16 @@ function findContent($, type = HTML, options = defaultOptions) {
 
   // Clean the final content in function of the options
   cleanContent($, content, options);
-  result.content = type === MD ? convertToMD(content.html()) : type === TXT ? getCleanText(content.text()) : content.html();
+  result.content = type === MD ? convertToMD(content.html()) : type === TXT ? getCleanText($, content) : content.html();
 
   return result;
-}
-
-function getCleanText(text) {
-  return getStatements(text).join('').trim();
 }
 
 /**
  * convertToMD - Convert the HTML into markdown
  *
- * @param  {type} html description
- * @returns {type}      description
+ * @param  {type} html the html to convert
+ * @returns {type}     the markdown version
  */
 function convertToMD(html) {
   const turndownService = new TurndownService();
@@ -116,6 +112,24 @@ function convertToMD(html) {
   turndownService.use(turndownPluginGfm.gfm);
 
   return turndownService.turndown(html);
+}
+
+/**
+ * getCleanText - Get the text version of the page.
+ * it returns only the text found in the <p> tags of the main content div
+ * in order to avoid invalid text concatenation
+ * @param  {type} $              The Cheerio reference
+ * @param  {type} contentSection The main content div
+ * @returns {type}                the text version of the main content div
+ */
+function getCleanText($, contentSection) {
+  const paragraphs = [];
+
+  contentSection.find('p').each((i, p) => {
+    paragraphs.push($(p).text());
+  });
+
+  return paragraphs.join('').trim();
 }
 
 /**

@@ -8,7 +8,7 @@ const { findContent } = require('../index.js');
 
 const writeFile = util.promisify(fs.writeFile);
 
-const url = '';
+const url = 'https://www.wanimo.com/veterinaire/education-du-chien/comment-bien-eduquer-mon-chiot.html';
 
 describe('Test Find Content', async () => {
   let $ = null;
