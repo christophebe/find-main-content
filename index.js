@@ -88,9 +88,9 @@ function findContent($, type = HTML, options = defaultOptions) {
 
   content = div ? $(div) : $('body');
 
-  // Extract images & links
-  result.links = findLinks($, content, options);
+  // Extract images, links, headers
   result.images = findImages($, content, options);
+  result.links = findLinks($, content, options);
   result.headers = findHeaders($, content, options);
 
   // Clean the final content in function of the options
@@ -339,15 +339,17 @@ function findLinks($, contentSection, options) {
  * @returns {Array<object>}        The list of the images found in the content
  */
 function findImages($, contentSection, options) {
+  // console.log($(contentSection).html());
   const images = [];
 
   contentSection.find('img').each((i, img) => {
+    console.log(img);
     images.push({ src: $(img).attr('src'), alt: $(img).attr('alt') });
-
-    if (options.removeImages) {
-      $('body').find('img').remove();
-    }
   });
+
+  if (options.removeImages) {
+    $('body').find('img').remove();
+  }
 
   return images;
 }
