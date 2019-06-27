@@ -339,11 +339,9 @@ function findLinks($, contentSection, options) {
  * @returns {Array<object>}        The list of the images found in the content
  */
 function findImages($, contentSection, options) {
-  // console.log($(contentSection).html());
   const images = [];
 
   contentSection.find('img').each((i, img) => {
-    console.log(img);
     images.push({ src: $(img).attr('src'), alt: $(img).attr('alt') });
   });
 
@@ -404,8 +402,6 @@ function findArticle($) {
   if (sectionTags.length > 0) {
     sectionTags.each((i, s) => {
       const nbrParas = $(s).find('p').length;
-
-      // console.log(`nbr p :${ nbrParas }`);
 
       if (selectedSection.nbrParas < nbrParas) {
         selectedSection = { s, nbrParas };

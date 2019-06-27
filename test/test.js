@@ -8,7 +8,7 @@ const { findContent } = require('../index.js');
 
 const writeFile = util.promisify(fs.writeFile);
 
-const url = '';
+const url = 'https://www.smartseovps.com/';
 
 describe('Test Find Content', async () => {
   let $ = null;
