@@ -1,6 +1,6 @@
 {
   "name": "find-main-content",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "Module for finding the main content on an HTML page with the help of Cheerio",
   "main": "index.js",
   "scripts": {
@@ -21,14 +21,14 @@
     "cheerio": "^1.0.0-rc.3",
     "eslint": "^5.14.1",
     "eslint-config-adidas-es8": "^1.1.0",
-    "eslint-plugin-import": "^2.17.3",
-    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-promise": "^4.2.1",
     "mocha": "^6.1.4",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7"
   },
   "dependencies": {
-    "natural-content": "^1.0.11",
+    "natural-content": "^1.1.0",
     "turndown": "^5.0.3",
     "turndown-plugin-gfm": "^1.0.2"
   }

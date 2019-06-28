@@ -1,6 +1,6 @@
 const TurndownService = require('turndown');
 const turndownPluginGfm = require('turndown-plugin-gfm');
-const { getStatements, removeSpecials, removeLineBreaks } = require('natural-content');
+const { removeLineBreakTabs } = require('natural-content');
 
 const HEADERS = 'h1,h2,h3,h4,h5,h6,h7';
 const DIV_ARTICLE = 'article,.article,#article,section,table,.container';
@@ -139,7 +139,7 @@ function getCleanText($, contentSection) {
  * @returns {string}   the text of the title
  */
 function getTitle($) {
-  return $('title') ? removeSpecials($('title').text()) : null;
+  return $('title') ? removeLineBreakTabs($('title').text()) : null;
 }
 
 /**
@@ -149,7 +149,7 @@ function getTitle($) {
  * @returns {string}  the text of the meta description
  */
 function getDescription($) {
-  return $('meta[name=description]') ? removeLineBreaks($('meta[name=description]').attr('content')) : null;
+  return $('meta[name=description]') ? removeLineBreakTabs($('meta[name=description]').attr('content')) : null;
 }
 
 /**
@@ -163,7 +163,7 @@ function getH1($, useFirstH1) {
   const nbrH1 = $('body').find('h1').length;
 
   return nbrH1 === 0 ? '' :
-    nbrH1 === 1 || useFirstH1 ? removeSpecials($('h1').first().text()) : '';
+    nbrH1 === 1 || useFirstH1 ? removeLineBreakTabs($('h1').first().text()) : '';
 }
 
 /**
@@ -302,7 +302,7 @@ function findHeaders($, contentSection) {
   const headers = [];
 
   contentSection.find(HEADERS).each((i, header) => {
-    headers.push({ type: header.name, text: removeSpecials($(header).text()) });
+    headers.push({ type: header.name, text: removeLineBreakTabs($(header).text()) });
   });
 
   return headers;
@@ -320,10 +320,10 @@ function findLinks($, contentSection, options) {
   const links = [];
 
   contentSection.find('a').each((i, a) => {
-    links.push({ href: removeLineBreaks($(a).attr('href')), text: removeSpecials($(a).text()) });
+    links.push({ href: removeLineBreakTabs($(a).attr('href')), text: removeLineBreakTabs($(a).text()) });
 
     if (options.replaceLinks) {
-      $(a).replaceWith(`${ removeSpecials($(a).text()) }`);
+      $(a).replaceWith(`${ removeLineBreakTabs($(a).text()) }`);
     }
   });
 
