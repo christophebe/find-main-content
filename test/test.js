@@ -8,7 +8,7 @@ const { findContent } = require('../index.js');
 
 const writeFile = util.promisify(fs.writeFile);
 
-const url = 'https://www.purina.fr/chiens/dressage-comportement/dressage-chien/techniques-dressage';
+const url = 'https://www.amstelgeld.nl/goedkoop-geld-lenen/';
 
 describe('Test Find Content', async () => {
   let $ = null;
