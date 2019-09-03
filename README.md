@@ -23,6 +23,8 @@ const { findContent } = require('find-main-content');
 
 const $ = cheerio.load('<html> .... </html>');
 
+// Return a nice data structure within the main content &
+// some extract infos on links, images, headers, title, description, ...
 const html = findContent($); // get the main content in the html format
 const txt = findContent($, 'txt'); // get the main content in the txt format
 const md = findContent($, 'md'); // get the main content in the markdown format
@@ -70,6 +72,42 @@ const { findContent } = require('find-main-content');
 
 const $ = cheerio.load('<html> .... </html>');
 
-const html = findContent($, 'html', options);
+const data = findContent($, 'html', options);
+
+```
+
+## Structure returned by the function findContent
+
+```
+{
+  title: '...',
+  description: "...',
+  images: [
+    {
+      src: 'https://... .jpg',
+      alt: '...'
+    },
+    ...
+  ],
+  links: [
+    {
+      href: 'https://...',
+      text: '...'
+    },
+
+  ],
+  headers: [
+    {
+      type: 'h1',
+      text: '...'
+    },
+    {
+      type: 'h2',
+      text: '...'
+    }
+    ...
+  ],
+  content: '....' // in either html, markdown or txt format
+}
 
 ```
