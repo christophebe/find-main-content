@@ -39,19 +39,19 @@ describe('Test Find Content', async () => {
     }
   });
 
-  // it('Convert in txt', async () => {
-  //   const result = findContent($, 'txt');
-  //
-  //   console.log(result);
-  //   await writeFile('./test.txt', result.content);
-  // });
-  //
-  // it('Convert in html', async () => {
-  //   const result = findContent($, 'html');
-  //
-  //   console.log(result);
-  //   await writeFile('./test.html', result.content);
-  // });
+  it('Convert in txt', async () => {
+    const result = findContent($, 'txt');
+
+    console.log(result);
+    await writeFile('./test.txt', result.content);
+  });
+
+  it('Convert in html', async () => {
+    const result = findContent($, 'html');
+
+    console.log(result);
+    await writeFile('./test.html', result.content);
+  });
 
   it('Convert in md', async () => {
     const result = findContent($, 'md' /* , { htmlSelector: '.article-content' }*/);

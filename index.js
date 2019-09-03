@@ -168,19 +168,19 @@ function getDescription($) {
  */
 function getH1($, useFirstH1) {
   const nbrH1 = $('body').find('h1').length;
-
   return nbrH1 === 0 ? '' : (nbrH1 === 1 || useFirstH1) ? getFirstH1($) : '';
 }
 
 function getFirstH1($) {
-  console.log("getFirstH1");
-  $('h1').each((i, h1) => {
-    console.log("h1", $(h1).text());
+  let h1s = [];
+
+  $('body').find('h1').each((i, h1) => {
     const text = removeLineBreakTabs($(h1).text());
-    if (text !== '') {
-      return text;
+    if (text  && text !== '') {
+      h1s.push(text);
     }
   });
+  return h1s.shift();
 
 }
 
@@ -320,7 +320,10 @@ function findHeaders($, contentSection) {
   const headers = [];
 
   contentSection.find(HEADERS).each((i, header) => {
-    headers.push({ type: header.name, text: removeLineBreakTabs($(header).text()) });
+    const text = removeLineBreakTabs($(header).text());
+    if (text && text.trim() != '') {
+        headers.push({ type: header.name, text });
+    }
   });
 
   return headers;
