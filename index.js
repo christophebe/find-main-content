@@ -71,7 +71,9 @@ const defaultOptions = {
  * @param  {object} options = defaultOptions List of options to change the content output
  * @returns {string}                         The HTML code of the main content of the page
  */
-function findContent($, type = HTML, options = defaultOptions) {
+function findContent($, type = HTML, o = defaultOptions) {
+  const options = {...o, ...defaultOptions};
+
   // Get the title, description and the H1
   const result = {
     title: getTitle($),
@@ -84,9 +86,14 @@ function findContent($, type = HTML, options = defaultOptions) {
 
   // Find the main div containing the main content
   let content = null;
-  const div = findContentSection($, content);
 
-  content = div ? $(div) : $('body');
+  if (options.htmlSelector) {
+    content = $(options.htmlSelector);
+  } else {
+    content = $(findContentSection($, content));
+  }
+
+  content = content ? content : $('body');
 
   // Extract images, links, headers
   result.images = findImages($, content, options);
@@ -162,8 +169,19 @@ function getDescription($) {
 function getH1($, useFirstH1) {
   const nbrH1 = $('body').find('h1').length;
 
-  return nbrH1 === 0 ? '' :
-    nbrH1 === 1 || useFirstH1 ? removeLineBreakTabs($('h1').first().text()) : '';
+  return nbrH1 === 0 ? '' : (nbrH1 === 1 || useFirstH1) ? getFirstH1($) : '';
+}
+
+function getFirstH1($) {
+  console.log("getFirstH1");
+  $('h1').each((i, h1) => {
+    console.log("h1", $(h1).text());
+    const text = removeLineBreakTabs($(h1).text());
+    if (text !== '') {
+      return text;
+    }
+  });
+
 }
 
 /**

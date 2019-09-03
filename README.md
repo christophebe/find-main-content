@@ -30,7 +30,7 @@ const md = findContent($, 'md'); // get the main content in the markdown format
 
 # Options
 
-You can control how to extract the main div with some options
+You can control how to extract the main div with some options. You can specify of a subset of the following attributes.
 
 ``` javascript
 
@@ -59,6 +59,9 @@ const options = {
 
   // Remove basic html tags that have no children
   removeEmptyTag: false
+
+  // The HTML selector. If specified, the main content will be extract from the html element that matchs to the selector
+  htmlSelector : '...'
 
 };
 

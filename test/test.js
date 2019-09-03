@@ -8,7 +8,7 @@ const { findContent } = require('../index.js');
 
 const writeFile = util.promisify(fs.writeFile);
 
-const url = 'https://www.amstelgeld.nl/goedkoop-geld-lenen/';
+const url = 'https://www.jack-russel.fr/traiter-poils-chien/';
 
 describe('Test Find Content', async () => {
   let $ = null;
@@ -28,6 +28,7 @@ describe('Test Find Content', async () => {
       transform(body) {
         return cheerio.load(body);
       }
+
     };
 
     try {
@@ -38,22 +39,22 @@ describe('Test Find Content', async () => {
     }
   });
 
-  it('Convert in txt', async () => {
-    const result = findContent($, 'txt');
-
-    console.log(result);
-    await writeFile('./test.txt', result.content);
-  });
-
-  it('Convert in html', async () => {
-    const result = findContent($, 'html');
-
-    console.log(result);
-    await writeFile('./test.html', result.content);
-  });
+  // it('Convert in txt', async () => {
+  //   const result = findContent($, 'txt');
+  //
+  //   console.log(result);
+  //   await writeFile('./test.txt', result.content);
+  // });
+  //
+  // it('Convert in html', async () => {
+  //   const result = findContent($, 'html');
+  //
+  //   console.log(result);
+  //   await writeFile('./test.html', result.content);
+  // });
 
   it('Convert in md', async () => {
-    const result = findContent($, 'md');
+    const result = findContent($, 'md' /* , { htmlSelector: '.article-content' }*/);
 
     console.log(result);
     await writeFile('./test.md', result.content);
