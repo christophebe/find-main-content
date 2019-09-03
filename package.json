@@ -1,6 +1,6 @@
 {
   "name": "find-main-content",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "Module for finding the main content on an HTML page with the help of Cheerio",
   "main": "index.js",
   "scripts": {
