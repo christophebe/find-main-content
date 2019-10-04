@@ -8,7 +8,7 @@ const { findContent } = require('../index.js');
 
 const writeFile = util.promisify(fs.writeFile);
 
-const url = 'https://www.jack-russel.fr/traiter-poils-chien/';
+const url = '';
 
 describe('Test Find Content', async () => {
   let $ = null;
@@ -54,7 +54,7 @@ describe('Test Find Content', async () => {
   });
 
   it('Convert in md', async () => {
-    const result = findContent($, 'md' /* , { htmlSelector: '.article-content' }*/);
+    const result = findContent($, 'md', { htmlSelector: 'body>div.container>div>div.col-lg-8' });
 
     console.log(result);
     await writeFile('./test.md', result.content);

@@ -68,11 +68,11 @@ const defaultOptions = {
  * @param  {object} $                        Cheerio reference matching to the HTML page
  * @param  {string} type                     the output type : HTML, TXT ot MD (markdown)
  *                                           else the html text is returned
- * @param  {object} options = defaultOptions List of options to change the content output
+ * @param  {object} o = defaultOptions List of options to change the content output
  * @returns {string}                         The HTML code of the main content of the page
  */
 function findContent($, type = HTML, o = defaultOptions) {
-  const options = {...o, ...defaultOptions};
+  const options = { ...o, ...defaultOptions };
 
   // Get the title, description and the H1
   const result = {
@@ -102,6 +102,11 @@ function findContent($, type = HTML, o = defaultOptions) {
 
   // Clean the final content in function of the options
   cleanContent($, content, options);
+
+  if (content.html() === null) {
+    throw new Error('Impossible to find the main content, try with an HTML selector');
+  }
+
   result.content = type === MD ? convertToMD(content.html()) : type === TXT ? getCleanText($, content) : content.html();
 
   return result;
@@ -168,20 +173,22 @@ function getDescription($) {
  */
 function getH1($, useFirstH1) {
   const nbrH1 = $('body').find('h1').length;
-  return nbrH1 === 0 ? '' : (nbrH1 === 1 || useFirstH1) ? getFirstH1($) : '';
+
+  return nbrH1 === 0 ? '' : nbrH1 === 1 || useFirstH1 ? getFirstH1($) : '';
 }
 
 function getFirstH1($) {
-  let h1s = [];
+  const h1s = [];
 
   $('body').find('h1').each((i, h1) => {
     const text = removeLineBreakTabs($(h1).text());
-    if (text  && text !== '') {
+
+    if (text && text !== '') {
       h1s.push(text);
     }
   });
-  return h1s.shift();
 
+  return h1s.shift();
 }
 
 /**
@@ -321,8 +328,9 @@ function findHeaders($, contentSection) {
 
   contentSection.find(HEADERS).each((i, header) => {
     const text = removeLineBreakTabs($(header).text());
+
     if (text && text.trim() != '') {
-        headers.push({ type: header.name, text });
+      headers.push({ type: header.name, text });
     }
   });
 
