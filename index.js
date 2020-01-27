@@ -361,7 +361,7 @@ function findHeaders($, contentSection) {
   contentSection.find(HEADERS).each((i, header) => {
     const text = removeLineBreakTabs($(header).text());
 
-    if (text && text.trim() != '') {
+    if (text && text.trim() !== '') {
       headers.push({ type: header.name, text });
     }
   });
