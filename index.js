@@ -7,8 +7,10 @@ const DIV_ARTICLE = 'article,.article,#article,section,table,.container';
 const BASIC_CONTENT = 'p,h1,h2,h3,h4,h5,h6,h7';
 const BAD_TAGS = 'script,link,header,style,noscript,object,footer,nav,iframe,br,svg';
 
-const N0T_A_GOOD_CLASS = '.combx,.comment,.disqus,.foot,.header,.menu,.meta,.nav,.rss,.shoutbox,.sidebar,.sponsor,.ssba,.bctt-click-to-tweet,.promo,.promotion';
-const N0T_A_GOOD_ID = '#combx,#comments,#disqus,#foot,#header,#menu,#meta,#nav,#rss,#shoutbox,#sidebar,#sponsor,#promo,#promotion,#ads';
+const N0T_A_GOOD_CLASS =
+  '.combx,.comment,.disqus,.foot,.header,.menu,.meta,.nav,.rss,.shoutbox,.sidebar,.sponsor,.ssba,.bctt-click-to-tweet,.promo,.promotion';
+const N0T_A_GOOD_ID =
+  '#combx,#comments,#disqus,#foot,#header,#menu,#meta,#nav,#rss,#shoutbox,#sidebar,#sponsor,#promo,#promotion,#ads';
 
 const CLASS_WEIGHT = 25;
 const MIN_LINK_DENSITY = 0.33;
@@ -33,7 +35,6 @@ const REGEX = {
 };
 
 const defaultOptions = {
-
   // If more then one H1 is found, use the first one as the main title of the page
   useFirstH1: true,
 
@@ -57,7 +58,6 @@ const defaultOptions = {
 
   // Remove basic html tags that have no children
   removeEmptyTag: false
-
 };
 
 /**
@@ -180,13 +180,15 @@ function getH1($, useFirstH1) {
 function getFirstH1($) {
   const h1s = [];
 
-  $('body').find('h1').each((i, h1) => {
-    const text = removeLineBreakTabs($(h1).text());
+  $('body')
+    .find('h1')
+    .each((i, h1) => {
+      const text = removeLineBreakTabs($(h1).text());
 
-    if (text && text !== '') {
-      h1s.push(text);
-    }
-  });
+      if (text && text !== '') {
+        h1s.push(text);
+      }
+    });
 
   return h1s.shift();
 }
@@ -198,19 +200,39 @@ function getFirstH1($) {
  * @param  {object}options  the options used to scrape the page
  */
 function cleanHTML($, options) {
-  $('body').find(BAD_TAGS + (options.removeForm ? ',form' : '')).remove();
-  $('body').find(N0T_A_GOOD_CLASS).remove();
-  $('body').find(N0T_A_GOOD_ID).remove();
+  if (options.removeTags) {
+    removeTags($, options.removeTags);
+  }
+
+  $('body')
+    .find(BAD_TAGS + (options.removeForm ? ',form' : ''))
+    .remove();
+  $('body')
+    .find(N0T_A_GOOD_CLASS)
+    .remove();
+  $('body')
+    .find(N0T_A_GOOD_ID)
+    .remove();
 
   // Remove all comments
   $('*')
-   .contents()
-   .filter((i, e) => e.type === 'comment')
-   .remove();
+    .contents()
+    .filter((i, e) => e.type === 'comment')
+    .remove();
 
   if (options.removeHeadersWithoutText) {
     removeHeadersWithoutText($);
   }
+}
+
+function removeTags($, tagsToRemoves) {
+  const tags = tagsToRemoves.split(/[\n,]+/);
+
+  tags.forEach(tag => {
+    $('body')
+      .find(tag)
+      .remove();
+  });
 }
 
 /**
@@ -275,28 +297,38 @@ function cleanContent($, contentSection, options) {
 function addTableHeader($, t) {
   // We simplify the process by removing caption inside the table
   // this is not possible to support all possibilities in the html tables structure
-  $(t).find('caption').remove();
+  $(t)
+    .find('caption')
+    .remove();
 
-  const firstElement = $(t).children().first();
+  const firstElement = $(t)
+    .children()
+    .first();
 
   // Case 1 :  a table with a tbody but without thead
   // Extract the first row from the tbody and create a header with it
   if (firstElement['0'].name === 'tbody') {
-    const firstRow = $(firstElement).children().first();
+    const firstRow = $(firstElement)
+      .children()
+      .first();
 
-    $(t).prepend(`<thead>${ firstRow.html() }</thead>`);
+    $(t).prepend(`<thead>${firstRow.html()}</thead>`);
     $(firstRow).remove();
 
-  // Case 2 : a table without tbody & without thead
-  // Create a header with the first row and create a tbody with the other rows
+    // Case 2 : a table without tbody & without thead
+    // Create a header with the first row and create a tbody with the other rows
   } else {
     const headerHtml = firstElement.html();
 
     $(firstElement).remove();
-    const rows = $(t).children().html();
+    const rows = $(t)
+      .children()
+      .html();
 
-    $(t).children().remove();
-    $(t).append(`<thead>${ headerHtml }</thead><tbody>${ rows }</tbody>`);
+    $(t)
+      .children()
+      .remove();
+    $(t).append(`<thead>${headerHtml}</thead><tbody>${rows}</tbody>`);
   }
 }
 
@@ -352,7 +384,7 @@ function findLinks($, contentSection, options) {
     links.push({ href: removeLineBreakTabs($(a).attr('href')), text: removeLineBreakTabs($(a).text()) });
 
     if (options.replaceLinks) {
-      $(a).replaceWith(`${ removeLineBreakTabs($(a).text()) }`);
+      $(a).replaceWith(`${removeLineBreakTabs($(a).text())}`);
     }
   });
 
@@ -375,7 +407,9 @@ function findImages($, contentSection, options) {
   });
 
   if (options.removeImages) {
-    $('body').find('img').remove();
+    $('body')
+      .find('img')
+      .remove();
   }
 
   return images;
@@ -387,11 +421,13 @@ function findImages($, contentSection, options) {
  * @param  {object} $ Cheerion ref
  */
 function removeHeadersWithoutText($) {
-  $('body').find(HEADERS).each((i, header) => {
-    if (getClassWeight($, header) < 0 || getLinkDensity($, header) > MIN_LINK_DENSITY) {
-      $(header).remove();
-    }
-  });
+  $('body')
+    .find(HEADERS)
+    .each((i, header) => {
+      if (getClassWeight($, header) < 0 || getLinkDensity($, header) > MIN_LINK_DENSITY) {
+        $(header).remove();
+      }
+    });
 }
 
 /**
@@ -451,45 +487,47 @@ function findArticle($) {
 function findGoodCandidates($) {
   const candidates = [];
 
-  $('body').find('p').each((i, p) => {
-    if ($(p).text().length === 0) {
-      $(p).remove();
-    }
+  $('body')
+    .find('p')
+    .each((i, p) => {
+      if ($(p).text().length === 0) {
+        $(p).remove();
+      }
 
-    // Ignore p with less than a min of chars
-    if ($(p).text() < MIN_CHARS) {
-      return;
-    }
+      // Ignore p with less than a min of chars
+      if ($(p).text() < MIN_CHARS) {
+        return;
+      }
 
-    // Initialize readability data for the paragraph
-    if (!p.readability) {
-      initializeElement($, p);
-      candidates.push(p);
-    }
+      // Initialize readability data for the paragraph
+      if (!p.readability) {
+        initializeElement($, p);
+        candidates.push(p);
+      }
 
-    // Initialize readability data for the parent element
-    // The first element in a the array is the parent
-    const parent = $(p).parent()['0'];
+      // Initialize readability data for the parent element
+      // The first element in a the array is the parent
+      const parent = $(p).parent()['0'];
 
-    if (!parent.readability) {
-      initializeElement($, parent);
-      candidates.push(parent);
-    }
+      if (!parent.readability) {
+        initializeElement($, parent);
+        candidates.push(parent);
+      }
 
-    let contentScore = 1;
+      let contentScore = 1;
 
-    // Add points for any commas within this paragraph
-    const text = $(p).text();
+      // Add points for any commas within this paragraph
+      const text = $(p).text();
 
-    contentScore += text.split(',').length;
+      contentScore += text.split(',').length;
 
-    // For every 100 characters in this paragraph, add an extra scrore of 3 points
-    contentScore += Math.min(Math.floor(text.length / NBR_CHARS), EXTRA_SCORE);
+      // For every 100 characters in this paragraph, add an extra scrore of 3 points
+      contentScore += Math.min(Math.floor(text.length / NBR_CHARS), EXTRA_SCORE);
 
-    /* Add the score to the p. The parent gets half. */
-    p.readability.contentScore += contentScore;
-    parent.readability.contentScore += contentScore / HALF;
-  });
+      /* Add the score to the p. The parent gets half. */
+      p.readability.contentScore += contentScore;
+      parent.readability.contentScore += contentScore / HALF;
+    });
 
   return candidates;
 }
@@ -535,10 +573,15 @@ function initializeElement($, e) {
  * @returns {number}             The score
  */
 function getContentScore(elementName) {
-  return elementName.toUpperCase() === 'DIV' ? VERY_GOOD_SCORE :
-    [ 'PRE', 'TD', 'BLOCKQUOTE' ].includes(elementName) ? GOOD_SCORE :
-      [ 'ADDRESS', 'OL', 'UL', 'DL', 'DD', 'DT', 'LI', 'FORM' ].includes(elementName) ? BAD_SCORE :
-        [ 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'TH' ].includes(elementName) ? VERY_BAD_SCORE : 0;
+  return elementName.toUpperCase() === 'DIV'
+    ? VERY_GOOD_SCORE
+    : ['PRE', 'TD', 'BLOCKQUOTE'].includes(elementName)
+    ? GOOD_SCORE
+    : ['ADDRESS', 'OL', 'UL', 'DL', 'DD', 'DT', 'LI', 'FORM'].includes(elementName)
+    ? BAD_SCORE
+    : ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'TH'].includes(elementName)
+    ? VERY_BAD_SCORE
+    : 0;
 }
 
 /**
@@ -591,9 +634,11 @@ function getLinkDensity($, element) {
   const textLength = removeExtraChars($(element).text()).length;
   let linkLength = 0;
 
-  $(element).find('a').each((i, a) => {
-    linkLength += $(a).text().length;
-  });
+  $(element)
+    .find('a')
+    .each((i, a) => {
+      linkLength += $(a).text().length;
+    });
 
   return linkLength / textLength;
 }

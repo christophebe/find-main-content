@@ -28,7 +28,6 @@ describe('Test Find Content', async () => {
       transform(body) {
         return cheerio.load(body);
       }
-
     };
 
     try {
@@ -39,14 +38,14 @@ describe('Test Find Content', async () => {
     }
   });
 
-  it('Convert in txt', async () => {
+  it.skip('Convert in txt', async () => {
     const result = findContent($, 'txt');
 
     console.log(result);
     await writeFile('./test.txt', result.content);
   });
 
-  it('Convert in html', async () => {
+  it.skip('Convert in html', async () => {
     const result = findContent($, 'html');
 
     console.log(result);
@@ -54,7 +53,13 @@ describe('Test Find Content', async () => {
   });
 
   it('Convert in md', async () => {
-    const result = findContent($, 'md', { htmlSelector: 'body>div.container>div>div.col-lg-8' });
+    const result = findContent($, 'md', {
+      htmlSelector: 'body>div.container>div>div.col-lg-8',
+      removeTags: `body > div.container > div > div.col-lg-8 > ol 
+         body > div.container > div > div.col-lg-8 > h3
+         body > div.container > div > div.col-lg-8 > div.menu-sitemap-tree
+         body > div.container > div > div.col-lg-8 > hr`
+    });
 
     console.log(result);
     await writeFile('./test.md', result.content);
