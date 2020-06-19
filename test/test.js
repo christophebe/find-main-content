@@ -8,13 +8,13 @@ const { findContent } = require('../index.js');
 
 const writeFile = util.promisify(fs.writeFile);
 
-const url = '';
+const url = 'https://www.jrtmy.info/your-life/training.html';
 
 describe('Test Find Content', async () => {
   let $ = null;
 
   beforeEach(async () => {
-    console.log('Requesting page ....');
+
     const options = {
       uri: url,
       encoding: 'utf8',
@@ -32,36 +32,32 @@ describe('Test Find Content', async () => {
 
     try {
       $ = await rq(options);
-      console.log('End of requesting page');
     } catch (e) {
       console.log(e);
     }
   });
 
-  it.skip('Convert in txt', async () => {
+  it('Convert in txt', async () => {
     const result = findContent($, 'txt');
 
-    console.log(result);
     await writeFile('./test.txt', result.content);
   });
 
-  it.skip('Convert in html', async () => {
+  it('Convert in html', async () => {
     const result = findContent($, 'html');
 
-    console.log(result);
     await writeFile('./test.html', result.content);
   });
 
-  it('Convert in md', async () => {
+  it('Convert in md by excluding some html tags', async () => {
     const result = findContent($, 'md', {
       htmlSelector: 'body>div.container>div>div.col-lg-8',
-      removeTags: `body > div.container > div > div.col-lg-8 > ol 
+      removeTags: `body > div.container > div > div.col-lg-8 > ol
          body > div.container > div > div.col-lg-8 > h3
          body > div.container > div > div.col-lg-8 > div.menu-sitemap-tree
          body > div.container > div > div.col-lg-8 > hr`
     });
 
-    console.log(result);
     await writeFile('./test.md', result.content);
   });
 });
