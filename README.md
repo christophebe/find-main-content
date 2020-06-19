@@ -66,7 +66,7 @@ const options = {
   // Remove tags that match to selectors
   removeTags : '... ' // list of selectors separated by comma or line break
 
-  // The HTML selector. If specified, the main content will be extract from the html element that matchs to the selector
+  // The HTML selector. If specified, the main content will be extracted from the html element that matchs to the selector
   htmlSelector : '...'
 
 
