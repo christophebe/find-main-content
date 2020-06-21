@@ -20,13 +20,13 @@
     "axios": "^0.19.2",
     "chai": "^4.2.0",
     "cheerio": "^1.0.0-rc.3",
-    "eslint": "^6.8.0",
-    "mocha": "^7.2.0",
+    "eslint": "^7.3.0",
+    "mocha": "^8.0.1",
     "puppeteer": "^4.0.0"
   },
   "dependencies": {
-    "natural-content": "^1.1.2",
-    "turndown": "^5.0.3",
+    "natural-content": "^1.2.3",
+    "turndown": "^6.0.0",
     "turndown-plugin-gfm": "^1.0.2"
   }
 }
