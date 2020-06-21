@@ -119,6 +119,6 @@ const data = findContent($, 'html', options);
 
 ## Dynamic content
 
-If the page loads dynamically some content with javascript, you can load it with Pupetteer before getting the main content of the page. 
+If the page loads dynamically some content with javascript, you can load it with Puppeteer before getting the main content of the page. 
 
 See in this unit test : https://github.com/christophebe/find-main-content/blob/master/test/test-puppeteer.js
