@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/christophebe/find-main-content#readme",
   "devDependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "chai": "^4.2.0",
     "cheerio": "^1.0.0-rc.3",
     "eslint": "^7.3.0",
